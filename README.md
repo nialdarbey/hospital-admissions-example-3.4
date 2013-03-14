@@ -25,3 +25,7 @@ EHRService and AdmissionService each of which exploit the commonality offered in
 Testing
 =======
 This webservice can be tested using SoapUI by pointing it at the url: http://localhost:8081/AdmissionService
+
+Further Information
+===================
+A more complete version of this example and the principles behind service orhestration are explained at http://blogs.mulesoft.org/soa-school-service-orchestration-2/
