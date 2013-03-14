@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:jdbc-ee="http://www.mulesoft.org/schema/mule/ee/jdbc"
+	xmlns:servlet="http://www.mulesoft.org/schema/mule/servlet" xmlns:ajax="http://www.mulesoft.org/schema/mule/ajax"
+	xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml"
+	xmlns:data-mapper="http://www.mulesoft.org/schema/mule/ee/data-mapper"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking"
+	xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf" xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.4.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/ajax http://www.mulesoft.org/schema/mule/ajax/current/mule-ajax.xsd 
+http://www.mulesoft.org/schema/mule/servlet http://www.mulesoft.org/schema/mule/servlet/current/mule-servlet.xsd 
+http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd 
+http://www.mulesoft.org/schema/mule/ee/data-mapper http://www.mulesoft.org/schema/mule/ee/data-mapper/current/mule-data-mapper.xsd 
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd 
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
+http://www.mulesoft.org/schema/mule/ee/jdbc http://www.mulesoft.org/schema/mule/ee/jdbc/current/mule-jdbc-ee.xsd 
+http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/current/mule-xml.xsd 
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd 
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd ">
+
+	<spring:beans>
+		<spring:bean id="property-placeholder"
+			class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+			<spring:property name="location"
+				value="classpath:config.dev.properties" />
+		</spring:bean>
+
+	</spring:beans>
+	<mulexml:namespace-manager
+		includeConfigNamespaces="true">
+		<mulexml:namespace prefix="soap" uri="http://schemas.xmlsoap.org/soap/envelope/" />
+		<mulexml:namespace prefix="mes" uri="http://www.mule-health.com/SOA/message/1.0" />
+		<mulexml:namespace prefix="mod" uri="http://www.mule-health.com/SOA/model/1.0" />
+	</mulexml:namespace-manager>
+	<data-mapper:config name="admit_subject_to_upsert_patient"
+		transformationGraphPath="admit_subject_to_upsert_patient.grf"
+		doc:name="DataMapper" />
+	<data-mapper:config name="upsert_patient_response_to_create_episode"
+		transformationGraphPath="upsert_patient_response_to_create_episode.grf"
+		doc:name="DataMapper" />
+	<object-to-string-transformer name="Object_to_String"
+		doc:name="Object to String" />
+	<data-mapper:config name="create_episode_response_to_admit_subject_response"
+		transformationGraphPath="create_episode_response_to_admit_subject_response.grf"
+		doc:name="DataMapper" />
+	<flow name="admitPatientService" doc:name="admitPatientService"
+		doc:description="AdmssionService SOAP-based web-service.">
+		<http:inbound-endpoint exchange-pattern="request-response"
+			host="localhost" port="${http.port}" doc:name="AdmissionService"
+			path="AdmissionService" />
+		<cxf:proxy-service doc:name="Proxy service"
+			namespace="http://www.mule-health.com/SOA/service/admission/1.0"
+			payload="body" port="AdmissionPort" service="AdmissionService"
+			wsdlLocation="service/AdmissionService.wsdl" />
+		<mulexml:dom-to-xml-transformer
+			returnClass="java.lang.String" />
+		<flow-ref name="upsertPatient" doc:name="Upsert Patient" />
+		<flow-ref name="createEpisode" doc:name="Create Episode" />
+		<data-mapper:transform
+			config-ref="create_episode_response_to_admit_subject_response"
+			doc:name="&lt;createEpisodeResponse /&gt; to &lt;admitSubjectResponse /&gt;" />
+	</flow>
+	<sub-flow name="upsertPatient" doc:name="upsertPatient">
+		<data-mapper:transform config-ref="admit_subject_to_upsert_patient"
+			doc:name="&amp;lt;admitSubject /&amp;gt; to &amp;lt;upsertPatient /&amp;gt;" />
+		<flow-ref name="invokePatientService" doc:name="Invoke Patient Service" />
+		<mulexml:dom-to-xml-transformer
+			returnClass="java.lang.String" />
+	</sub-flow>
+	<sub-flow name="invokePatientService" doc:name="invokePatientService">
+		<cxf:proxy-client payload="body"
+			enableMuleSoapHeaders="true" doc:name="Proxy client" />
+		<http:outbound-endpoint exchange-pattern="request-response"
+			host="localhost" port="${http.port}" path="PatientService" doc:name="PatientService" />
+	</sub-flow>
+	<sub-flow name="createEpisode" doc:name="createEpisode">
+		<data-mapper:transform config-ref="upsert_patient_response_to_create_episode"
+			doc:name="&amp;lt;upsertPatientResponse /&amp;gt; to &amp;lt;createEpisode /&amp;gt;" />
+		<flow-ref name="invokeEHRService" doc:name="Invoke EHR Service" />
+		<mulexml:dom-to-xml-transformer
+			returnClass="java.lang.String" />
+	</sub-flow>
+	<sub-flow name="invokeEHRService" doc:name="invokeEHRService">
+		<cxf:proxy-client payload="body"
+			enableMuleSoapHeaders="true" doc:name="Proxy client" />
+		<http:outbound-endpoint exchange-pattern="request-response"
+			host="localhost" port="${http.port}" path="EHRService" doc:name="EHRService" />
+	</sub-flow>
+
+</mule>

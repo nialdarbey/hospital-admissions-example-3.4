@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml"
+	xmlns:data-mapper="http://www.mulesoft.org/schema/mule/ee/data-mapper" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd 
+http://www.mulesoft.org/schema/mule/ee/data-mapper http://www.mulesoft.org/schema/mule/ee/data-mapper/current/mule-data-mapper.xsd 
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd 
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
+http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/current/mule-xml.xsd 
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd ">
+    <data-mapper:config name="insurance_request_to_insurance_response" transformationGraphPath="insurance_request_to_insurance_response.grf" doc:name="DataMapper"/>
+    <data-mapper:config name="insurance_request_to_insurance_request_rejected" transformationGraphPath="insurance_request_to_insurance_request_rejected.grf" doc:name="DataMapper"/>
+    <data-mapper:config name="upsert_patient_to_upsert_patient_response" transformationGraphPath="upsert_patient_to_upsert_patient_response.grf" doc:name="DataMapper"/>
+    <data-mapper:config name="get_patient_to_get_patient_response" transformationGraphPath="get_patient_to_get_patient_response.grf" doc:name="DataMapper"/>
+    <data-mapper:config name="create_episode_to_create_episode_response" transformationGraphPath="create_episode_to_create_episode_response.grf" doc:name="DataMapper"/>
+    <data-mapper:config name="find_episodes_to_find_episodes_response" transformationGraphPath="find_episodes_to_find_episodes_response.grf" doc:name="DataMapper"/>
+    <data-mapper:config name="create_bill_to_create_bill_response" transformationGraphPath="create_bill_to_create_bill_response.grf" doc:name="DataMapper"/>
+    <data-mapper:config name="audit_request_to_audit_response" transformationGraphPath="audit_request_to_audit_response.grf" doc:name="DataMapper"/>
+    <flow name="PatientService" doc:name="PatientService">
+        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="${http.port}" doc:name="PatientService" path="PatientService"/>
+        <cxf:proxy-service doc:name="Proxy service" namespace="http://www.mule-health.com/SOA/service/patient/1.0" payload="body" port="PatientPort" service="PatientService" wsdlLocation="service/PatientService.wsdl"/>
+        <mulexml:dom-to-xml-transformer />
+        <set-variable doc:name="operation" value="#[xpath(&apos;fn:local-name(/*)&apos;)]" variableName="operation"/>
+        <choice doc:name="Choice">
+            <when expression="#[flowVars.operation == &apos;upsertPatient&apos;]">
+                <processor-chain doc:name="upsertPatient">
+                    <data-mapper:transform config-ref="upsert_patient_to_upsert_patient_response" doc:name="&amp;lt;upsertPatientRequest /&amp;gt; to &amp;lt;upsertPatientResponse /&amp;gt;"/>
+                </processor-chain>
+            </when>
+            <otherwise>
+                <processor-chain doc:name="getPatient">
+                    <data-mapper:transform config-ref="get_patient_to_get_patient_response" doc:name="&amp;lt;getPatient /&amp;gt; to &amp;lt;getPatientResponse /&amp;gt;"/>
+                </processor-chain>
+            </otherwise>
+        </choice>
+    </flow>
+    <flow name="EHRService" doc:name="EHRService">
+        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="${http.port}" doc:name="EHRService" path="EHRService"/>
+        <cxf:proxy-service doc:name="Proxy service" namespace="http://www.mule-health.com/SOA/service/ehr/1.0" payload="body" port="EHRPort" service="EHRService"  wsdlLocation="service/EHRService.wsdl"/>
+        <mulexml:dom-to-xml-transformer />
+        <set-variable doc:name="operation" value="#[xpath('fn:local-name(/*)')]" variableName="operation"/>
+        <choice doc:name="Choice">
+            <when expression="#[flowVars.operation == &apos;createEpisode&apos;]">
+                <processor-chain doc:name="createEpisode">
+                    <data-mapper:transform config-ref="create_episode_to_create_episode_response" doc:name="&amp;lt;createEpisode /&amp;gt; to &amp;lt;createEpisodeResponse /&amp;gt;"/>
+                </processor-chain>
+            </when>
+            <otherwise>
+                <processor-chain doc:name="findEpisode">
+                    <data-mapper:transform config-ref="find_episodes_to_find_episodes_response" doc:name="&amp;lt;findEpisode /&amp;gt; to &amp;lt;findEpisodeResponse /&amp;gt;"/>
+                </processor-chain>
+            </otherwise>
+        </choice>
+    </flow>
+    
+</mule>
