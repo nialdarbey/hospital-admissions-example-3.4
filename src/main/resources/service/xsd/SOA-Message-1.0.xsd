@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns:mod="http://www.mule-health.com/SOA/model/1.0" xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.mule-health.com/SOA/message/1.0" xmlns:tns="http://www.mule-health.com/SOA/message/1.0" elementFormDefault="unqualified">
-	<import namespace="http://www.mule-health.com/SOA/model/1.0" schemaLocation="SOA-Model-1.0.xsd" />
+<schema xmlns:mod="http://www.mule-health.com/SOA/model/1.0"
+	xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.mule-health.com/SOA/message/1.0"
+	xmlns:tns="http://www.mule-health.com/SOA/message/1.0"
+	elementFormDefault="unqualified">
+	<import namespace="http://www.mule-health.com/SOA/model/1.0"
+		schemaLocation="SOA-Model-1.0.xsd" />
 
 	<element name="admitSubject">
 		<complexType>
@@ -13,14 +17,9 @@
 	</element>
 	<element name="admitSubjectResponse">
 		<complexType>
-			<choice>
-				<sequence>
-					<element ref="mod:Episode" />
-					<element ref="mod:Bill" />
-					<element ref="mod:InsuranceCaseNumber" />
-				</sequence>
-				<element ref="mod:InsuranceCoverStatus" />
-			</choice>
+			<sequence>
+				<element ref="mod:Episode" />
+			</sequence>
 		</complexType>
 	</element>
 

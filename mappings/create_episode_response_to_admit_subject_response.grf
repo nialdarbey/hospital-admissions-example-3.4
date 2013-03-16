@@ -67,7 +67,7 @@ $out.0.__id=$in.0.__id;
 	$out.0.ns1_PatientId=$in.0.ns1_PatientId;
 	$out.0.admission=$in.0.admission;
 	$out.0.startDate=$in.0.startDate;
-	$out.0.endDate=$in.0.endDate;
+	$out.0.endDate=dateAdd($in.0.endDate, 5, day);
 	$out.0.care=$in.0.care;
 		return ALL;
 }

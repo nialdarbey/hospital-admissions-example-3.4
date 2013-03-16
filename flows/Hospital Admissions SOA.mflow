@@ -66,7 +66,7 @@
             <property value="create_episode_response_to_admit_subject_response.grf" name="transformationGraphPath"/>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="admitPatientService" entity-id="44037e2a-36ba-4310-aa09-28fac83de6df">
+    <flow SubFlow="false" name="admitPatientService" entity-id="081fdb81-94d2-4ee6-b37a-37a2fb7907a6">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
@@ -158,7 +158,7 @@
             </pattern>
         </lane>
     </flow>
-    <flow SubFlow="true" name="upsertPatient" entity-id="03940e57-6d9b-4d83-91d5-f3827eb24444">
+    <flow SubFlow="true" name="upsertPatient" entity-id="761d9d80-69fe-4cda-ba34-3059d89f03d9">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
@@ -193,7 +193,7 @@
             </unknown>
         </lane>
     </flow>
-    <flow SubFlow="true" name="invokePatientService" entity-id="896ec6e7-7264-4a68-b37f-26761c0dd72e">
+    <flow SubFlow="true" name="invokePatientService" entity-id="8f0fc5df-6658-4b57-95ac-525da99ee223">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
@@ -230,7 +230,7 @@
                     <property name="keep-alive"/>
                     <property name="contentType"/>
                     <property name="disableTransportTransformer"/>
-                    <property name="password"/>
+                    <property value="hello123" name="password"/>
                     <property value="request-response" name="exchange-pattern"/>
                     <property name="tracking:enable-default-events"/>
                     <property name="ref"/>
@@ -241,7 +241,7 @@
                     <property name="encoding"/>
                     <property name="responseTransformer-refs"/>
                     <property name="method"/>
-                    <property name="user"/>
+                    <property value="nialdarbey" name="user"/>
                     <property name="responseTimeout"/>
                     <property name="mimeType"/>
                     <property value="25" name="auxiliary;index"/>
@@ -250,7 +250,7 @@
             </endpoint>
         </lane>
     </flow>
-    <flow SubFlow="true" name="createEpisode" entity-id="2ecc0ec8-259a-4839-8983-f15a8d5c19bf">
+    <flow SubFlow="true" name="createEpisode" entity-id="880d0f2a-0c26-43ff-8d17-fcb675efd0ad">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
@@ -285,7 +285,7 @@
             </unknown>
         </lane>
     </flow>
-    <flow SubFlow="true" name="invokeEHRService" entity-id="00ad70bd-522d-4439-bcd5-38c38ae0083b">
+    <flow SubFlow="true" name="invokeEHRService" entity-id="890b438c-45da-4733-b154-9eca69de391c">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>

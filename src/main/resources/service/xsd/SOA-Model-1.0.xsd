@@ -7,6 +7,7 @@
 	<element name="Patient" type="tns:patientType" />
 	<element name="PatientId" type="tns:patientIdType" />
 	<element name="Episode" type="tns:episodeType" />
+	<element name="Bill" type="tns:billType" />
 
 	<complexType name="refererType">
 		<sequence>
@@ -64,6 +65,22 @@
 		</sequence>
 	</complexType>
 
+	<complexType name="billType">
+		<sequence>
+			<element name="costPerNight" type="string" />
+			<element name="initialStayEstimate" type="string" />
+			<element name="runningTotal" type="string" />
+			<element name="status">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="Pending" />
+						<enumeration value="Complete" />
+					</restriction>
+				</simpleType>
+			</element>
+		</sequence>
+	</complexType>
+
 	<simpleType name="admissionType">
 		<restriction base="string">
 			<enumeration value="Elective" />
@@ -99,4 +116,18 @@
 		</restriction>
 	</simpleType>
 
+	<complexType name="transactionType">
+		<sequence>
+			<element name="dateTime" type="dateTime" />
+			<element name="type">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="Request" />
+						<enumeration value="Response" />
+					</restriction>
+				</simpleType>
+			</element>
+			<any namespace="http://www.mule-health.com/SOA/message/1.0" maxOccurs="unbounded" />
+		</sequence>
+	</complexType>
 </schema>

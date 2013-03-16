@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:jdbc-ee="http://www.mulesoft.org/schema/mule/ee/jdbc"
+<mule xmlns:ldap="http://www.mulesoft.org/schema/mule/ldap" xmlns:jdbc-ee="http://www.mulesoft.org/schema/mule/ee/jdbc"
 	xmlns:servlet="http://www.mulesoft.org/schema/mule/servlet" xmlns:ajax="http://www.mulesoft.org/schema/mule/ajax"
 	xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml"
 	xmlns:data-mapper="http://www.mulesoft.org/schema/mule/ee/data-mapper"
@@ -11,13 +11,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
-http://www.mulesoft.org/schema/mule/ajax http://www.mulesoft.org/schema/mule/ajax/current/mule-ajax.xsd 
-http://www.mulesoft.org/schema/mule/servlet http://www.mulesoft.org/schema/mule/servlet/current/mule-servlet.xsd 
 http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd 
 http://www.mulesoft.org/schema/mule/ee/data-mapper http://www.mulesoft.org/schema/mule/ee/data-mapper/current/mule-data-mapper.xsd 
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd 
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
+http://www.mulesoft.org/schema/mule/ldap http://www.mulesoft.org/schema/mule/ldap/3.3/mule-ldap.xsd 
 http://www.mulesoft.org/schema/mule/ee/jdbc http://www.mulesoft.org/schema/mule/ee/jdbc/current/mule-jdbc-ee.xsd 
+http://www.mulesoft.org/schema/mule/servlet http://www.mulesoft.org/schema/mule/servlet/current/mule-servlet.xsd 
+http://www.mulesoft.org/schema/mule/ajax http://www.mulesoft.org/schema/mule/ajax/current/mule-ajax.xsd 
 http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/current/mule-xml.xsd 
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd 
 http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd ">
@@ -75,7 +76,7 @@ http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/cu
 		<cxf:proxy-client payload="body"
 			enableMuleSoapHeaders="true" doc:name="Proxy client" />
 		<http:outbound-endpoint exchange-pattern="request-response"
-			host="localhost" port="${http.port}" path="PatientService" doc:name="PatientService" />
+			host="localhost" port="${http.port}" path="PatientService" doc:name="PatientService" password="hello123" user="nialdarbey"/>
 	</sub-flow>
 	<sub-flow name="createEpisode" doc:name="createEpisode">
 		<data-mapper:transform config-ref="upsert_patient_response_to_create_episode"
