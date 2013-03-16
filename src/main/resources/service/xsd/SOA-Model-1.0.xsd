@@ -116,18 +116,4 @@
 		</restriction>
 	</simpleType>
 
-	<complexType name="transactionType">
-		<sequence>
-			<element name="dateTime" type="dateTime" />
-			<element name="type">
-				<simpleType>
-					<restriction base="string">
-						<enumeration value="Request" />
-						<enumeration value="Response" />
-					</restriction>
-				</simpleType>
-			</element>
-			<any namespace="http://www.mule-health.com/SOA/message/1.0" maxOccurs="unbounded" />
-		</sequence>
-	</complexType>
 </schema>

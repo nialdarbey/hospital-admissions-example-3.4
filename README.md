@@ -4,7 +4,8 @@ This is an example of Webservice orchestration in Mule using simple xml only pro
 using the xpath() function to retrieve the name of the element (Document Literal Wrapped pattern). 
 The webservice is exposed as a SOAP based service and orchestrates two other services used to electively admit a patient to hospital:
 * the PatientService responsible for Patient Demographics administration
-* the EHRService responsible for the administration of Episodes in the Electronic Health Record
+* the EHRService responsible for the administration of Episodes in the Electronic Health Record.
+
 The above services have been mocked for the purpose of this example.
 
 Proxy Service
