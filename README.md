@@ -15,13 +15,13 @@ of the contents of the body or passing the whole Envelope as is. Validation agai
 
 Proxy Client
 ============
-The consumption of other services is realied by the Proxy client operation on the Soap Message Processor. This will automatically wrap the xml message in
+The consumption of other services is realised by the Proxy client operation on the Soap Message Processor. This will automatically wrap the xml message in
 a Soap Envelope suitable to send to a SOAP based web service.
 
 Canonical Model
 ===============
-A recommended best practice in the Service Oriented Architecture, this example standardises on the Messaging format for all three services: PatientService,
-EHRService and AdmissionService each of which exploit the commonality offered in the canonical model.
+The use of a standard business domain model is a recommended best practice in the Service Oriented Architecture. This example also standardises on the Messaging format 
+for all three services: PatientService, EHRService and AdmissionService each of which exploit the commonality offered in the canonical model.
 
 Testing
 =======
